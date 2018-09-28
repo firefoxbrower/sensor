@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="utf-8">
+    <title>达晨农业墒情</title>
+	<!-- jQuery -->
+    <script src="${base}/scripts/jquery-2.1.4.js" type="text/javascript"></script>
+	<!-- MINIUI CSS -->
+	<link  href="${base}/scripts/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />
+	<!-- miniui -->
+    <script src="${base}/scripts/miniui/miniui.js" type="text/javascript"></script> 
+	<!-- DataTables CSS --> 
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+    <!-- DataTables -->
+    <script src="${base}/scripts/"></script>
+  </head>
+<body>
+
+	<form action="${base}/getLandInfo.action" method="POST">
+<table border="0" align="center" cellspacing="4" cellpadding="4">
+	<tr>
+		<td>草场:</td>
+		<td><input name="field"></td>
+	</tr>
+	<tr>
+		<td>地块:</td>
+		<td><input name="land"></td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" /></td>
+	</tr>
+</table>
+</form>
+ <a class="mini-button"  href="hello.action"> 测试spring MVC</a><br/>
+     <hr/>
+   <center> 读取配置 <a class="mini-button"  href="loadpro.action">配置</a><br/></center>
+   <center>获取设备 <a class="mini-button"  href="httpData.action">设备号</a><br/></center>
+     <center>最新采集时间 <a class="mini-button"  href="collectTime.action">更新时间</a><br/></center> 
+<!--    土壤墒情水分数据<a class="mini-button"   href="sensor.action">土壤墒情数据</a><br/> -->
+   <hr/>
+   <!--    土壤墒情水分数据<a class="mini-button"   href="sensor2.action">土壤墒情</a><br/> -->
+<!--    柱状图<a class="mini-button" href="echarts/load.action">标准柱状图</a><br/> -->
+   折线图<a class="mini-button" href="echarts/line.action">折线图</a><br/>
+<!--折线图<a class="mini-button" href="index2.jsp">折线图</a><br/> -->
+<hr/>
+  springmvc支持原生的ServletAPI
+  <a class="mini-button" href="springMvc_servletAPI/testServletAPI.action">原生API</a><br/>
+  <br/>
+   <button id="ok" class="mini-button">原生API</button>
+  <hr/>
+  <script type="text/javascript">
+  
+  /**
+	 * 创建XMLHttpRequest对象
+	 * 
+	 */
+	function ajaxFunction(){
+		var  xmlHttp;
+		try {
+			// Firefox , Opera 8.0+ , Safari
+			xmlHttp = new XMLHttpRequest();
+	
+   } catch (e) {
+	
+		try { // Internet Explorer
+		xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+		   
+	          } catch (e) {
+		
+			    try { // other
+		             xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	               } catch (e) {
+		
+	}
+	
+
+	}
+
+              }
+       return xmlHttp ;
+
+	}
+ 
+ 
+ window.onload=function(){
+ 	 
+	  document.getElementById("ok").onclick=function(){
+	    
+		// 1.获取XMLHttpRequest对象
+		var xmlReq=ajaxFunction();
+		
+		/*
+		 * 2.接受服务端的响应
+		 *  XMLHttpRequest对象中有一个readyState属性，
+		 *   readyState 属性表示Ajax请求的当前状态。它的值用数字表示。
+		 *    0 代表未初始化。还没有调用open 方法。
+		 *    1代表正在加载。 open 方法 已被调用，但send 方法还没有被调用
+		 *    2代表已加载完毕。 send 已被调用。请求已经开始
+		 *    3代表交互中。 服务器正在发送响应。
+		 *    4代表完成。 响应发送完毕
+		 *    每次readState值的改变，都会触发onreadystatechange 事件
+		 *    status
+		 *     服务器发送的每一个响应也都带有首部信息。三位数的状态码是服务器发送的响应中最重要的首部信息，
+		 *     并且属于超文本传输协议中的一部分。
+		 *     404 没找到页面 not found
+		 *     403禁止访问 foridden
+		 *     500内部服务器出错 internal service error
+		 *     200 一切正常（ok）
+		 *     304没有被修改（not modified）(服务器返回304状态，表示源文件没有被修改)
+		 *     在XMLHttpRequest对象中，服务器发送的状态码都保存在status属性里。通过把这个值和200
+		 *     或304比较，可以确保服务器是否已发送了一个成功的响应。
+		 * 
+		 */
+		xmlReq.onreadystatechange=function(){
+			//alert(xmlReq.readyState);
+			// 响应发送完毕
+			if(xmlReq.readyState==4){
+				//alert(xmlReq.status);
+				// 通过把这个值和200(服务器处理成功) 或 304(文件没有被修改)
+				if(xmlReq.status==200||xmlReq.status==304){
+					// 接受服务端返回的数据
+					var data=xmlReq.responseText;
+					alert("返回的数据内容   " + data);
+					
+				}
+			}
+		}
+		
+		/*
+		 * 3.打开和服务器的连接
+		 * open(method , url ,asynch)
+		 *   method请求方法 get post
+		 *   url 请求的路径
+		 * asynch:表示请求是否要异步传输，默认值为true(异步)
+		 */
+		xmlReq.open("get","springMvc_servletAPI/testServletAPI.action?timeStamp="+new Date().getTime()+"&a=9",true);
+		/*
+		 * 4.发送数据
+		 *  若选用的是GET请求，则不会发送任何数据，给send方法传递null即可
+		 * 
+		 */
+		xmlReq.send("b=4&c=23") ;
+		
+		
+	  };
+	
+ }
+  
+  
+  </script>
+  </body>
+</html>
